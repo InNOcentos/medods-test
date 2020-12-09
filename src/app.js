@@ -1,11 +1,18 @@
 const express = require("express");
 const app = express();
-const { PORT } = require("./utils/constants");
-require("./dataBase"); // db connection
+const { PORT, API_PREFIX, ExitCode } = require("./constants");
+const routes = require("./routes");
+const mongoDB = require("./utils/database");
 
-app.listen(PORT, (err) => {
-  if (err) {
-    console.log(err);
-  }
-  console.log(`Listening on ${PORT}`);
-});
+app.use(API_PREFIX, routes);
+
+const boot = async () => {
+  await mongoDB.init();
+  app.listen(PORT, (err) => {
+    if (err) {
+      console.log(`Can't start server. Error: ${err.message}`);
+      process.exit(ExitCode.error);
+    }
+  });
+};
+boot();
