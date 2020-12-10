@@ -1,45 +1,106 @@
+const assert = require("assert");
+
 class RefreshToken {
   constructor(connection) {
     this.connection = connection;
   }
 
-  async save({ refreshToken, userId }) {
+  save({ refreshToken, userId }) {
     try {
-      await this.connection.db.collection("refreshTokens").insertOne(
-        {
-          token: refreshToken,
-          uid: userId,
-        },
-        (err, res) => {
-          if (err) {
-            console.log(err);
-            return;
+      return new Promise((resolve, reject) => {
+        this.connection.db.collection("refreshTokens").insertOne(
+          {
+            token: refreshToken,
+            uid: userId,
+          },
+          (err, res) => {
+            if (err) {
+              reject(err);
+            }
+            if (res) {
+              console.log("Added the following token");
+              console.log(res.ops);
+            }
+            resolve(res);
           }
-        }
-      );
+        );
+      });
     } catch (err) {
       console.log(err);
       return null;
     }
   }
 
-  async findByUser({ refreshToken, userId }) {
+  findByUser(userId) {
     try {
-      const connection = this._db().then((client) => {
-        const db = client.db();
-        db.collection("refreshTokens").findOne(
+      return new Promise((resolve, reject) => {
+        this.connection.db.collection("refreshTokens").findOne(
           {
             uid: userId,
           },
           (err, res) => {
             if (err) {
-              console.log(err);
-              return;
+              reject(err);
             }
+            if (res) {
+              console.log("Found the following user");
+              console.log(res);
+            }
+            resolve(res);
           }
         );
       });
-      return connection;
+    } catch (err) {
+      console.log(err);
+      return null;
+    }
+  }
+
+  findByToken(refreshToken) {
+    try {
+      return new Promise((resolve, reject) => {
+        this.connection.db.collection("refreshTokens").findOne(
+          {
+            token: refreshToken,
+          },
+          (err, res) => {
+            if (err) {
+              reject(err);
+            }
+            if (res) {
+              console.log("Found the following token");
+              console.log(res);
+            }
+            resolve(res);
+          }
+        );
+      });
+    } catch (err) {
+      console.log(err);
+      return null;
+    }
+  }
+
+  drop(token) {
+    console.log(12345);
+    try {
+      return new Promise((resolve, reject) => {
+        this.connection.db.collection("refreshTokens").deleteOne(
+          {
+            token,
+          },
+          (err, res) => {
+            if (err) {
+              reject(err);
+            }
+            if (res) {
+              console.log("Deleted the following token");
+              console.log(res);
+            }
+            resolve(res);
+          }
+        );
+      });
     } catch (err) {
       console.log(err);
       return null;
