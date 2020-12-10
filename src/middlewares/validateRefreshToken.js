@@ -10,8 +10,7 @@ module.exports = (service) => async (req, res, next) => {
     return res.status(HttpCode.BAD_REQUEST).end();
   }
 
-  const { userId } = parseJWT(refreshToken);
-
+  const userId = parseJWT(refreshToken);
   let storedRefreshToken = await service.findByUser(userId);
 
   if (!storedRefreshToken) {
