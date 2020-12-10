@@ -1,14 +1,17 @@
+const { encrypt } = require("../utils/hash");
+
 class RefreshToken {
   constructor(connection) {
     this._connection = connection;
   }
 
-  save({ refreshToken, userId }) {
+  async save({ refreshToken, userId }) {
+    const hash = encrypt(refreshToken);
     try {
       return new Promise((resolve, reject) => {
         this._connection.db.collection("refreshTokens").insertOne(
           {
-            token: refreshToken,
+            token: hash,
             uid: userId,
           },
           (err, res) => {
@@ -16,8 +19,7 @@ class RefreshToken {
               reject(err);
             }
             if (res) {
-              console.log("Added the following token");
-              console.log(res.ops);
+              console.log("Successfully added token");
             }
             resolve(res);
           }
@@ -41,8 +43,7 @@ class RefreshToken {
               reject(err);
             }
             if (res) {
-              console.log("Found the following user");
-              console.log(res);
+              console.log("Successfully found token by user");
             }
             resolve(res);
           }
@@ -54,36 +55,10 @@ class RefreshToken {
     }
   }
 
-  findByToken(refreshToken) {
+  drop({ token }) {
     try {
       return new Promise((resolve, reject) => {
-        this._connection.db.collection("refreshTokens").findOne(
-          {
-            token: refreshToken,
-          },
-          (err, res) => {
-            if (err) {
-              reject(err);
-            }
-            if (res) {
-              console.log("Found the following token");
-              console.log(res);
-            }
-            resolve(res);
-          }
-        );
-      });
-    } catch (err) {
-      console.log(err);
-      return null;
-    }
-  }
-
-  drop(token) {
-    console.log(12345);
-    try {
-      return new Promise((resolve, reject) => {
-        this._connection.db.collection("refreshTokens").deleteOne(
+        this._connection.db.collection("refreshTokens").findOneAndDelete(
           {
             token,
           },
@@ -92,8 +67,7 @@ class RefreshToken {
               reject(err);
             }
             if (res) {
-              console.log("Deleted the following token");
-              console.log(res);
+              console.log("Successfully deleted token");
             }
             resolve(res);
           }

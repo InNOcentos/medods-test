@@ -1,5 +1,6 @@
 const PORT = process.env.PORT || 8080;
 const API_PREFIX = "/api";
+const IV_LENGTH = 16;
 const ExitCode = {
   success: 0,
   error: 1,
@@ -17,4 +18,5 @@ module.exports = {
   ExitCode,
   API_PREFIX,
   HttpCode,
+  IV_LENGTH,
 };

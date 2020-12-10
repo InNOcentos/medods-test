@@ -3,7 +3,9 @@ const app = express();
 const { PORT, API_PREFIX, ExitCode } = require("./constants");
 const routes = require("./routes");
 const mongoDB = require("./utils/database");
+const morgan = require("morgan");
 
+app.use(morgan("dev"));
 app.use(API_PREFIX, routes);
 
 const boot = async () => {

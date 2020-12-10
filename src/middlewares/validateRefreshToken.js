@@ -1,6 +1,8 @@
 const { HttpCode } = require("../constants");
 const JWT = require("jsonwebtoken");
 const { jwt_refresh_secret } = require("../config");
+const parseJWT = require("../utils/parseJWT");
+const { decrypt } = require("../utils/hash");
 
 module.exports = (service) => async (req, res, next) => {
   const refreshToken = req.headers["reftoken"];
@@ -8,12 +10,21 @@ module.exports = (service) => async (req, res, next) => {
     return res.status(HttpCode.BAD_REQUEST).end();
   }
 
-  const storedRefreshToken = await service.findByToken(refreshToken);
+  const { userId } = parseJWT(refreshToken);
+
+  let storedRefreshToken = await service.findByUser(userId);
+
   if (!storedRefreshToken) {
     return res.status(HttpCode.NOT_FOUND).end();
   }
 
-  const verifyToken = await JWT.verify(storedRefreshToken.token, jwt_refresh_secret, (err, userData) => {
+  const decryptedStoredRefreshToken = decrypt(storedRefreshToken.token);
+
+  if (decryptedStoredRefreshToken !== refreshToken) {
+    return res.status(HttpCode.FORBIDDEN).end();
+  }
+
+  const verifyToken = await JWT.verify(decryptedStoredRefreshToken, jwt_refresh_secret, (err, userData) => {
     if (err) {
       return false;
     }
@@ -23,7 +34,7 @@ module.exports = (service) => async (req, res, next) => {
   if (!verifyToken) {
     return res.status(HttpCode.FORBIDDEN).end();
   }
-  res.locals.token = refreshToken;
+  res.locals.token = storedRefreshToken;
   res.locals.user = verifyToken;
   next();
 };

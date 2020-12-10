@@ -18,4 +18,6 @@ module.exports = {
   jwt_access_algorithm: process.env.JWT_ACCESS_ALGORITHM,
   jwt_refresh_secret: process.env.JWT_REFRESH_SECRET,
   jwt_refresh_duration: process.env.JWT_REFRESH_DURATION,
+  hash_secret: process.env.HASH_SECRET,
+  hash_algorithm: process.env.HASH_ALGORITHM,
 };

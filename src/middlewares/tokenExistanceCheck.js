@@ -7,6 +7,7 @@ module.exports = (service) => async (req, res, next) => {
     const storedRefreshToken = await service.findByUser(userId);
 
     if (storedRefreshToken) {
+      console.log("Token was not added");
       return res.status(HttpCode.OK).end();
     }
 
