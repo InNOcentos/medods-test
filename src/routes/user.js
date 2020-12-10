@@ -13,9 +13,10 @@ const userRouter = (app, refreshTokenService) => {
       const { userId } = res.locals.user;
       const existToken = res.locals.token;
       const { accessToken, refreshToken } = makeTokens({ userId });
-      console.log("1234525regdfgdfhfdh");
+
       await refreshTokenService.drop(existToken);
       await refreshTokenService.save({ refreshToken, userId });
+
       res.status(HttpCode.OK);
       res.header("accessToken", `${accessToken}`);
       res.header("refreshToken", `${refreshToken}`);
@@ -29,7 +30,6 @@ const userRouter = (app, refreshTokenService) => {
   route.post("/:userId", tokenExistanceCheck(refreshTokenService), async (req, res, next) => {
     try {
       const { userId } = req.params;
-
       const { accessToken, refreshToken } = makeTokens({ userId });
 
       await refreshTokenService.save({ refreshToken, userId });

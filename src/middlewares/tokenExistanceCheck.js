@@ -1,5 +1,4 @@
 const { HttpCode } = require("../constants");
-const db = require("../utils/database");
 
 module.exports = (service) => async (req, res, next) => {
   const { userId } = req.params;

@@ -1,14 +1,12 @@
-const assert = require("assert");
-
 class RefreshToken {
   constructor(connection) {
-    this.connection = connection;
+    this._connection = connection;
   }
 
   save({ refreshToken, userId }) {
     try {
       return new Promise((resolve, reject) => {
-        this.connection.db.collection("refreshTokens").insertOne(
+        this._connection.db.collection("refreshTokens").insertOne(
           {
             token: refreshToken,
             uid: userId,
@@ -34,7 +32,7 @@ class RefreshToken {
   findByUser(userId) {
     try {
       return new Promise((resolve, reject) => {
-        this.connection.db.collection("refreshTokens").findOne(
+        this._connection.db.collection("refreshTokens").findOne(
           {
             uid: userId,
           },
@@ -59,7 +57,7 @@ class RefreshToken {
   findByToken(refreshToken) {
     try {
       return new Promise((resolve, reject) => {
-        this.connection.db.collection("refreshTokens").findOne(
+        this._connection.db.collection("refreshTokens").findOne(
           {
             token: refreshToken,
           },
@@ -85,7 +83,7 @@ class RefreshToken {
     console.log(12345);
     try {
       return new Promise((resolve, reject) => {
-        this.connection.db.collection("refreshTokens").deleteOne(
+        this._connection.db.collection("refreshTokens").deleteOne(
           {
             token,
           },
